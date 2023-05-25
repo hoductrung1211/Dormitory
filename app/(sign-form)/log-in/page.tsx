@@ -4,17 +4,41 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import URLs from "@/app/services/urls";
 import ImageGroup from "../ImageGroup";
+import useAuth from "@/app/services/useAuth";
+import Spinner from "@/app/components/Spinner";
 
 export default function Page() {
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
+    const auth = useAuth();
     const [credentials, setCredentials] = useState({
-        id: '',
+        email: 'eve.holt@reqres.in',
         password: '',
     });
+    const [errors, setErrors] = useState<{email: false | string, password: false | string}>({
+        email: false,
+        password: false,
+    });
 
-    function handleLogin(e: FormEvent) {
+
+    async function handleLogin(e: FormEvent) {
         e.preventDefault();
-        router.push(URLs.StudentHome);
+        let response;
+        try {
+            setIsLoading(true);
+            response = await auth.authenticateSuccessful(credentials.email, credentials.password);
+
+        } finally {
+            setIsLoading(false);
+        } 
+        if (response?.error) {
+            setErrors({
+                ...errors,
+                password: response.error,
+            })
+        } else if(response === true) {
+            router.push(URLs.StudentHome);
+        }
     }
 
     return (
@@ -31,21 +55,22 @@ export default function Page() {
                     icon="user"
                     label="Identifier"
                     placeholder="N19DCCN001"
-                    error={false}
-                    value={credentials.id}
-                    handleChangeInput={e => setCredentials({...credentials, id: e.target.value})}
+                    error={errors.email}
+                    value={credentials.email}
+                    handleChangeInput={e => setCredentials({...credentials, email: e.target.value})}
                 />
                 <Input
                     icon="key"
                     label="Password"
                     placeholder="Your password"
                     type="password"
-                    error={"Wrong password"}
+                    error={errors.password}
                     value={credentials.password}
                     handleChangeInput={e => setCredentials({...credentials, password: e.target.value})}
                 />
                 <Button text="Log in" />
             </Form>
+            {isLoading && <Spinner />}
         </>
     )
 }
