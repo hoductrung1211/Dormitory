@@ -1,6 +1,6 @@
 import Link from "next/link";
 import URLs from "../services/urls";
-import Header from "./Header";
+import Header from "../components/Header";
 
 export default function Layout({
     children
@@ -8,13 +8,13 @@ export default function Layout({
     children: React.ReactNode,
 }) {
     return (
-        <div className="">
+        <>
             <Header />
 			<main className="mx-auto max-w-[1200px] h-screen flex items-center justify-center">
-				<section className="w-[960px] h-[580px] flex gap-4 p-5 border-2 bg-gray-100">
-						{children}
+				<section className="w-full h-[600px] flex gap-4 p-8 bg-gray-50 rounded-lg">
+					{children}
                 </section>
 			</main>
-        </div>
+        </>
     )
 }

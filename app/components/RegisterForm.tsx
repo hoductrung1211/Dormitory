@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from "react"; 
 import { useRouter } from "next/navigation";
-import useAuthentication from "./services/useAuthentication";
+import useAuthentication from "../services/useAuthentication";
 
 export default function RegisterForm( )  {
     const router = useRouter();
