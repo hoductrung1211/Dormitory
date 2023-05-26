@@ -3,16 +3,16 @@
 import Form, { Button, Input } from "../Form";
 import { FormEvent, use, useState } from "react";
 import { useRouter } from "next/navigation";
-import URLs from "@/app/services/urls";
-import Spinner from "@/app/components/Spinner";
+import URLs from "@/app/services/urls"; 
 import useAuth from "@/app/services/useAuth";
 import SignUpSuc from "./SignUpSuc";
+import useLoadingAnimation from "@/app/components/LoadingContext";
 
 export default function Page() {
     const router = useRouter();
+    const [showLoading, hideLoading] = useLoadingAnimation();
     const [isSignupSuc, setIsSignupSuc] = useState(false);
-    const auth = useAuth();
-    const [isLoading, setIsLoading] = useState(false);
+    const auth = useAuth(); 
     const [credentials, setCredentials] = useState({
         id: 'eve.holt@reqres.in',
         // id: 'sydney@fife',
@@ -29,15 +29,14 @@ export default function Page() {
     async function handleSignup(e: FormEvent) {
         e.preventDefault();
         let response;
-        try {
-            setIsLoading(true);
+        try { 
+            showLoading();
             response = await auth.registerSuccessful( 
                 credentials.id,
                 credentials.password,
              );
-
-        } finally {
-            setIsLoading(false);
+        } finally { 
+            hideLoading();
         } 
         if (response?.error) {
             setErrors({
@@ -87,8 +86,7 @@ export default function Page() {
                     />
                     <Button text="Log in" />
                 </Form>
-            }
-            {isLoading && <Spinner />}
+            } 
         </>
     )
 }

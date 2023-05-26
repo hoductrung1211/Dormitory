@@ -4,12 +4,12 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import URLs from "@/app/services/urls";
 import ImageGroup from "../ImageGroup";
-import useAuth from "@/app/services/useAuth";
-import Spinner from "@/app/components/Spinner";
+import useAuth from "@/app/services/useAuth"; 
+import useLoadingAnimation from "@/app/components/LoadingContext";
 
-export default function Page() {
-    const [isLoading, setIsLoading] = useState(false);
+export default function Page() { 
     const router = useRouter();
+    const [showLoading, hideLoading] = useLoadingAnimation();
     const auth = useAuth();
     const [credentials, setCredentials] = useState({
         email: 'eve.holt@reqres.in',
@@ -24,12 +24,11 @@ export default function Page() {
     async function handleLogin(e: FormEvent) {
         e.preventDefault();
         let response;
-        try {
-            setIsLoading(true);
+        try { 
+            showLoading();
             response = await auth.authenticateSuccessful(credentials.email, credentials.password);
-
-        } finally {
-            setIsLoading(false);
+        } finally { 
+            hideLoading();
         } 
         if (response?.error) {
             setErrors({
@@ -69,8 +68,7 @@ export default function Page() {
                     handleChangeInput={e => setCredentials({...credentials, password: e.target.value})}
                 />
                 <Button text="Log in" />
-            </Form>
-            {isLoading && <Spinner />}
+            </Form> 
         </>
     )
 }
